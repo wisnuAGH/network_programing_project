@@ -5,6 +5,7 @@ import sys
 import socket
 from scapy.all import *
 
+
 def udp_traceroute(destination, max_hops=30, timeout=2):
     for ttl in range(1, max_hops + 1):
         packet = IP(dst=destination, ttl=ttl) / UDP(dport=33434)
@@ -23,6 +24,7 @@ def udp_traceroute(destination, max_hops=30, timeout=2):
             break
         else:
             print(f"{ttl}: {reply.src} - Unknown ICMP type {reply.type}")
+
 
 def icmp_traceroute(destination, max_hops=30, timeout=2):
     for ttl in range(1, max_hops + 1):
@@ -43,7 +45,8 @@ def icmp_traceroute(destination, max_hops=30, timeout=2):
         else:
             print(f"{ttl}: {reply.src} - Unknown ICMP type {reply.type}")
 
-if name == "main":
+
+if __name__ == "__main__":
     if len(sys.argv) != 3:
         print("Usage: python traceroute.py <destination> <protocol>")
         sys.exit(1)
