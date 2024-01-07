@@ -1,8 +1,4 @@
 # Network programming Project AGH university
+# authors: Paweł Harmata, Łukasz Żądło, Mikołaj Wiśniewski
 
-def print_hi(name):
-    print(f'Hi, {name}')
-
-
-if __name__ == '__main__':
-    print_hi('PyCharm')
+# TODO: Start code
