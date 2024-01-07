@@ -1,7 +1,6 @@
 # Traceroute
 
 import socket
-import struct
 import time
 from .icmp import send_icmp_packet
 from .udp import send_udp_packet
