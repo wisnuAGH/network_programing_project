@@ -1,4 +1,5 @@
-# traceroute_lib/traceroute.py
+# Traceroute
+
 import socket
 import struct
 import time
@@ -12,15 +13,6 @@ class TracePath:
         self.destination = destination
         self.max_hops = max_hops
         self.timeout = timeout
-
-    def calculate_checksum(self, data):
-        checksum = 0
-        for i in range(0, len(data), 2):
-            checksum += (data[i] << 8) + data[i + 1]
-
-        checksum = (checksum >> 16) + (checksum & 0xffff)
-        checksum += checksum >> 16
-        return ~checksum & 0xffff
 
     def trace(self, protocol='icmp'):
         for ttl in range(1, self.max_hops + 1):
