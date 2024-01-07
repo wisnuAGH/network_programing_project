@@ -5,8 +5,8 @@ import struct
 from .common import calculate_checksum
 
 
-def send_icmp_packet(self, ttl):
-    icmp_socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, self.icmp_protocol)
+def send_icmp_packet(ttl, destination, icmp_protocol):
+    icmp_socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, icmp_protocol)
     icmp_socket.setsockopt(socket.SOL_IP, socket.IP_TTL, ttl)
 
     icmp_header = struct.pack('!BBHHH', 8, 0, 0, 0, 0)
@@ -14,7 +14,7 @@ def send_icmp_packet(self, ttl):
 
     icmp_packet = struct.pack('!BBHHH', 8, 0, icmp_checksum, 0, 0)
 
-    destination_address = socket.gethostbyname(self.destination)
+    destination_address = socket.gethostbyname(destination)
     try:
         icmp_socket.sendto(icmp_packet, (destination_address, 1))
     except OSError as e:

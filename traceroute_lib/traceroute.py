@@ -12,23 +12,26 @@ class TracePath:
         self.destination = destination
         self.max_hops = max_hops
         self.timeout = timeout
+        self.icmp_protocol = socket.getprotobyname('icmp')
+        self.udp_protocol = socket.getprotobyname('udp')
+        self.tcp_protocol = socket.getprotobyname('tcp')
 
     def trace(self, protocol='icmp'):
         for ttl in range(1, self.max_hops + 1):
             start_time = time.time()
 
             if protocol == 'icmp':
-                send_icmp_packet(ttl, self.destination)
+                send_icmp_packet(ttl, self.destination, self.icmp_protocol)
             elif protocol == 'udp':
-                send_udp_packet(ttl, self.destination)
+                send_udp_packet(ttl, self.destination, self.udp_protocol)
             elif protocol == 'tcp':
-                send_tcp_packet(ttl, self.destination)
+                send_tcp_packet(ttl, self.destination, self.tcp_protocol)
 
             receive_socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
             receive_socket.settimeout(self.timeout)
 
             try:
-                _, _, _, _, addr = receive_socket.recvfrom(512)
+                packet, addr = receive_socket.recvfrom(512)
                 end_time = time.time()
                 round_trip_time = (end_time - start_time) * 1000
                 print(f"{ttl}: {addr[0]}, RTT: {round_trip_time:.3f} ms")
