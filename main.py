@@ -1,62 +1,30 @@
 # Network programming Project AGH university
 # authors: Paweł Harmata, Łukasz Żądło, Mikołaj Wiśniewski
+# traceroute_lib implementation
 
-import sys
-import socket
-from scapy.all import *
-
-
-def udp_traceroute(destination, max_hops=30, timeout=2):
-    for ttl in range(1, max_hops + 1):
-        packet = IP(dst=destination, ttl=ttl) / UDP(dport=33434)
-        reply = sr1(packet, timeout=timeout, verbose=0)
-
-        if reply is None:
-            break
-        elif reply.type == 3:  # ICMP Time Exceeded
-            print(f"{ttl}: {reply.src}")
-            if reply.src == destination:
-                print("Destination reached!")
-                break
-        elif reply.type == 0:  # ICMP Echo Reply
-            print(f"{ttl}: {reply.src}")
-            print("Destination reached!")
-            break
-        else:
-            print(f"{ttl}: {reply.src} - Unknown ICMP type {reply.type}")
-
-
-def icmp_traceroute(destination, max_hops=30, timeout=2):
-    for ttl in range(1, max_hops + 1):
-        packet = IP(dst=destination, ttl=ttl) / ICMP()
-        reply = sr1(packet, timeout=timeout, verbose=0)
-
-        if reply is None:
-            break
-        elif reply.type == 11:  # ICMP Time Exceeded
-            print(f"{ttl}: {reply.src}")
-            if reply.src == destination:
-                print("Destination reached!")
-                break
-        elif reply.type == 0:  # ICMP Echo Reply
-            print(f"{ttl}: {reply.src}")
-            print("Destination reached!")
-            break
-        else:
-            print(f"{ttl}: {reply.src} - Unknown ICMP type {reply.type}")
+from traceroute_lib import TracePath
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: python traceroute.py <destination> <protocol>")
-        sys.exit(1)
+    destination_host = input("Enter the destination host: ")
 
-    destination = sys.argv[1]
-    protocol = sys.argv[2].lower()
+    while True:
+        print("Choose protocol: icmp, udp, tcp")
+        selected_protocol = input("Enter the protocol: ")
 
-    if protocol == "udp":
-        udp_traceroute(destination)
-    elif protocol == "icmp":
-        icmp_traceroute(destination)
-    else:
-        print("Invalid protocol. Supported protocols: udp, icmp")
+        tracer = TracePath(destination_host)
+
+        if selected_protocol == 'icmp':
+            print("Tracing route using ICMP:")
+            tracer.trace(protocol='icmp')
+            break
+        elif selected_protocol == 'udp':
+            print("\nTracing route using UDP:")
+            tracer.trace(protocol='udp')
+            break
+        elif selected_protocol == 'tcp':
+            print("\nTracing route using TCP:")
+            tracer.trace(protocol='tcp')
+            break
+        else:
+            print("Invalid protocol!")
