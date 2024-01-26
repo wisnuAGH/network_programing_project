@@ -23,6 +23,7 @@ def send_tcp_packet(ttl, destination, tcp_protocol):
         tcp_socket.connect((destination_address, 80))
         tcp_socket.send(tcp_packet)
     except OSError as e:
-        print(f"{ttl}: {e}")
+        print(f"{ttl}: halo {e}")
+        return 1
     finally:
         tcp_socket.close()

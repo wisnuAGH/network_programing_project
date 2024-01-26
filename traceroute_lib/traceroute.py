@@ -7,6 +7,14 @@ from .udp import send_udp_packet
 from .tcp import send_tcp_packet
 
 
+def translate_destination(destination):
+    try:
+        translated_destination = socket.gethostbyaddr(destination)[0]
+    except socket.herror:
+        translated_destination = destination
+    return translated_destination
+
+
 class TracePath:
     def __init__(self, destination, max_hops=30, timeout=1):
         self.destination = destination
@@ -17,6 +25,8 @@ class TracePath:
         self.tcp_protocol = socket.getprotobyname('tcp')
 
     def trace(self, protocol='icmp'):
+        translated_destination = translate_destination(self.destination)
+        addr = ["127.0.0.1", 0]
         for ttl in range(1, self.max_hops + 1):
             start_time = time.time()
 
@@ -25,7 +35,9 @@ class TracePath:
             elif protocol == 'udp':
                 send_udp_packet(ttl, self.destination, self.udp_protocol)
             elif protocol == 'tcp':
-                send_tcp_packet(ttl, self.destination, self.tcp_protocol)
+                if send_tcp_packet(ttl, self.destination, self.tcp_protocol) == 1:
+                    print("TCP: failed to establish connection.")
+                    break
 
             receive_socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
             receive_socket.settimeout(self.timeout)
@@ -40,5 +52,5 @@ class TracePath:
 
             receive_socket.close()
 
-            if addr[0] == self.destination:
+            if translate_destination(addr[0]) == translated_destination:
                 break

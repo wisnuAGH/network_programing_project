@@ -4,15 +4,27 @@
 
 from traceroute_lib import TracePath
 
-destination_host = "example.com"
 
-tracer = TracePath(destination_host)
+if __name__ == "__main__":
+    destination_host = input("Enter the destination host: ")
 
-print("Tracing route using ICMP:")
-tracer.trace(protocol='icmp')
+    while True:
+        print("Choose protocol: icmp, udp, tcp")
+        selected_protocol = input("Enter the protocol: ")
 
-print("\nTracing route using UDP:")
-tracer.trace(protocol='udp')
+        tracer = TracePath(destination_host)
 
-print("\nTracing route using TCP:")
-tracer.trace(protocol='tcp')
+        if selected_protocol == 'icmp':
+            print("Tracing route using ICMP:")
+            tracer.trace(protocol='icmp')
+            break
+        elif selected_protocol == 'udp':
+            print("\nTracing route using UDP:")
+            tracer.trace(protocol='udp')
+            break
+        elif selected_protocol == 'tcp':
+            print("\nTracing route using TCP:")
+            tracer.trace(protocol='tcp')
+            break
+        else:
+            print("Invalid protocol!")
